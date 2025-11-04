@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Component Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4bb543;
+            --danger: #dc3545;
+            --card-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+        
+        .app-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 25px;
+        }
+        
+        @media (max-width: 900px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .admin-panel {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            height: fit-content;
+        }
+        
+        .admin-panel h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .form-group {
+            margin-bottom: 18px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9rem;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1.5px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.2);
+        }
+        
+        button {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition);
+            width: 100%;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(67, 97, 238, 0.3);
+        }
+        
+        .components-section {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .section-header h2 {
+            color: var(--primary);
+        }
+        
+        .filter-tabs {
+            display: flex;
+            background: #f1f3f9;
+            border-radius: 10px;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .filter-tab {
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            text-align: center;
+            flex: 1;
+        }
+        
+        .filter-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .component-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: var(--transition);
+            border: 1px solid #f0f0f0;
+        }
+        
+        .component-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-body {
+            padding: 15px;
+        }
+        
+        .card-body p {
+            margin-bottom: 10px;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .card-footer {
+            padding: 12px 15px;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .delete-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: var(--transition);
+        }
+        
+        .delete-btn:hover {
+            background: #c82333;
+            transform: scale(1.05);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #adb5bd;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: var(--success);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateX(150%);
+            transition: transform 0.4s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .component-count {
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .type-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-microchip"></i> CP Lab</h1>
+            <p class="subtitle">List for microprocessors, sensors and components</p>
+        </header>
+        
+        <div class="app-container">
+            <div class="admin-panel">
+                <h2><i class="fas fa-plus-circle"></i> Add Component</h2>
+                <form id="componentForm">
+                    <div class="form-group">
+                        <label for="componentType">Type</label>
+                        <select id="componentType" required>
+                            <option value="">Select type</option>
+                            <option value="microprocessor">Microprocessor</option>
+                            <option value="sensor">Sensor</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="componentName">Name</label>
+                        <input type="text" id="componentName" placeholder="e.g., Arduino Uno" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="componentDescription">Description</label>
+                        <textarea id="componentDescription" rows="2" placeholder="Brief description"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="componentSpecs">Specifications</label>
+                        <textarea id="componentSpecs" rows="2" placeholder="Key specifications"></textarea>
+                    </div>
+                    
+                    <button type="submit">Add to Inventory</button>
+                </form>
+            </div>
+            
+            <div class="components-section">
+                <div class="section-header">
+                    <h2>Component Inventory</h2>
+                    <div class="component-count" id="componentCount">5</div>
+                </div>
+                
+                <div class="filter-tabs">
+                    <div class="filter-tab active" data-filter="all">All</div>
+                    <div class="filter-tab" data-filter="microprocessor">Microprocessors</div>
+                    <div class="filter-tab" data-filter="sensor">Sensors</div>
+                    <div class="filter-tab" data-filter="other">Other</div>
+                </div>
+                
+                <div class="components-grid" id="componentsGrid">
+                    <!-- Components will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span>Component added successfully!</span>
+    </div>
+
+    <script>
+        // Sample initial data
+        let components = [
+            {
+                id: 1,
+                type: "microprocessor",
+                name: "Arduino Uno",
+                description: "Open-source microcontroller board based on ATmega328P.",
+                specs: "Microcontroller: ATmega328P, Operating Voltage: 5V"
+            },
+            {
+                id: 2,
+                type: "microprocessor",
+                name: "ESP32 Cam",
+                description: "Small-size, low-power camera module based on ESP32.",
+                specs: "Wi-Fi: 802.11 b/g/n, Camera: OV2640 2MP"
+            },
+            {
+                id: 3,
+                type: "sensor",
+                name: "DHT22",
+                description: "Digital temperature and humidity sensor.",
+                specs: "Temp Range: -40 to 80°C, Humidity: 0-100%"
+            },
+            {
+                id: 4,
+                type: "sensor",
+                name: "HC-SR04",
+                description: "Ultrasonic distance sensor.",
+                specs: "Range: 2cm - 400cm, Voltage: 5V"
+            },
+            {
+                id: 5,
+                type: "other",
+                name: "16x2 LCD Display",
+                description: "Basic LCD display for DIY projects.",
+                specs: "16 Characters x 2 Lines, 5V operation"
+            }
+        ];
+
+        // DOM elements
+        const componentForm = document.getElementById('componentForm');
+        const componentsGrid = document.getElementById('componentsGrid');
+        const notification = document.getElementById('notification');
+        const filterTabs = document.querySelectorAll('.filter-tab');
+        const componentCount = document.getElementById('componentCount');
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            renderComponents('all');
+            setupEventListeners();
+            updateComponentCount();
+        });
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Form submission
+            componentForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                addComponent();
+            });
+
+            // Filter tabs
+            filterTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-filter');
+                    
+                    // Update active tab
+                    filterTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Render filtered components
+                    renderComponents(filter);
+                });
+            });
+        }
+
+        // Add a new component
+        function addComponent() {
+            const type = document.getElementById('componentType').value;
+            const name = document.getElementById('componentName').value;
+            const description = document.getElementById('componentDescription').value;
+            const specs = document.getElementById('componentSpecs').value;
+
+            const newComponent = {
+                id: Date.now(),
+                type,
+                name,
+                description,
+                specs
+            };
+
+            components.push(newComponent);
+            renderComponents('all');
+            showNotification('Component added successfully!');
+            componentForm.reset();
+            updateComponentCount();
+            
+            // Reset active tab to "All"
+            filterTabs.forEach(t => t.classList.remove('active'));
+            filterTabs[0].classList.add('active');
+        }
+
+        // Delete a component
+        function deleteComponent(id) {
+            components = components.filter(component => component.id !== id);
+            renderComponents('all');
+            showNotification('Component deleted!');
+            updateComponentCount();
+        }
+
+        // Render components based on filter
+        function renderComponents(filter) {
+            componentsGrid.innerHTML = '';
+            
+            let filteredComponents = components;
+            if (filter !== 'all') {
+                filteredComponents = components.filter(comp => comp.type === filter);
+            }
+            
+            if (filteredComponents.length === 0) {
+                componentsGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-microchip"></i>
+                        <h3>No components found</h3>
+                        <p>Add a new component using the form</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            filteredComponents.forEach(component => {
+                const componentCard = createComponentCard(component);
+                componentsGrid.appendChild(componentCard);
+            });
+        }
+
+        // Create a component card element
+        function createComponentCard(component) {
+            const card = document.createElement('div');
+            card.className = 'component-card';
+            
+            let typeIcon = 'fas fa-microchip';
+            if (component.type === 'sensor') typeIcon = 'fas fa-thermometer-half';
+            if (component.type === 'other') typeIcon = 'fas fa-puzzle-piece';
+            
+            card.innerHTML = `
+                <div class="card-header">
+                    <div>
+                        <h3><i class="${typeIcon}"></i> ${component.name}</h3>
+                    </div>
+                    <span class="type-badge">${component.type}</span>
+                </div>
+                <div class="card-body">
+                    <p>${component.description}</p>
+                    <p><strong>Specs:</strong> ${component.specs}</p>
+                </div>
+                <div class="card-footer">
+                    <span>ID: ${component.id}</span>
+                    <button class="delete-btn" onclick="deleteComponent(${component.id})">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Show notification
+        function showNotification(message) {
+            notification.querySelector('span').textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Update component count
+        function updateComponentCount() {
+            componentCount.textContent = components.length;
+        }
+    </script>
+</body>
+</html>
